@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Category, Topic } from '../models/forum';
-// Datos locales: esta evaluación permite frontend y backend independientes.
+// Datos locales: esta sumativa permite frontend y backend independientes.
 @Injectable({ providedIn: 'root' })
 export class ForumService {
   readonly categories: readonly Category[] = [
