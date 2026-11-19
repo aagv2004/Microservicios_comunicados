@@ -3,13 +3,14 @@
 -- El archivo usuarios.sql se ejecuta previamente en el esquema DUOC_USUARIOS.
 -- Los autores 2 y 3 corresponden a Usuario Uno y Usuario Dos de ese archivo.
 -- Las referencias de autor son externas; no se crean tablas ni permisos cruzados.
-SET DEFINE OFF;
 
 -- El script elimina las tablas de Foro y sus datos antes de recrear su estructura.
 -- La ejecucion corresponde al esquema propietario del microservicio de Foro.
 -- El esquema requiere CREATE TABLE, CREATE SEQUENCE y cuota en el tablespace DATA.
 -- La eliminacion de tablas hijas precede a la de sus tablas padre.
 -- La ausencia de una tabla permite continuar; los demas errores se propagan.
+
+-- ¡¡ CUIDADO CON EJECUTAR FUERA DEL ESQUEMA CORRESPONDIENTE !!
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE foro_comentarios CASCADE CONSTRAINTS PURGE';
 EXCEPTION

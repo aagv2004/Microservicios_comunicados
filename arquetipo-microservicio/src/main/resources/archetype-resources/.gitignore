@@ -1,0 +1,13 @@
+target/
+.env
+.env.*
+application-local.properties
+Wallet*/
+wallet*/
+*.sso
+*.p12
+*.jks
+*.key
+*.log
+.idea/
+.vscode/

@@ -31,6 +31,26 @@ public class Comentario {
     @Column(name = "actualizado_en", nullable = false)
     private Instant actualizadoEn;
 
+    @Convert(converter = org.hibernate.type.NumericBooleanConverter.class)
+    @Column(nullable = false)
+    private boolean bloqueado;
+
+    @Column(name = "motivo_bloqueo", length = 500)
+    private String motivoBloqueo;
+
+    @Column(name = "moderador_id")
+    private Long moderadorId;
+
+    public boolean isBloqueado() { return bloqueado; }
+    public String getMotivoBloqueo() { return motivoBloqueo; }
+    public Long getModeradorId() { return moderadorId; }
+
+    public void moderar(boolean bloqueado, String motivo, Long moderadorId) {
+        this.bloqueado = bloqueado;
+        this.motivoBloqueo = motivo;
+        this.moderadorId = moderadorId;
+    }
+
     @PrePersist
     void alCrear() {
         creadoEn = Instant.now();

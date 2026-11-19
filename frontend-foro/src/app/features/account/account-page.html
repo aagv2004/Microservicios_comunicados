@@ -1,0 +1,241 @@
+<div class="row g-4 g-lg-5 align-items-start account-layout">
+  <aside class="col-12 col-md-5">
+    <a routerLink="/" class="back-link">← Volver al foro</a>
+    <div class="account-intro mt-4">
+      <p class="eyebrow">TU VOZ TIENE UN LUGAR</p>
+      <h1>{{ title() }}</h1>
+      <p>
+        Comparte lo que sabes, descubre otras miradas y encuentra personas con tus mismos intereses.
+      </p>
+      <div class="intro-art" aria-hidden="true">conecta<span>.</span></div>
+      <p class="demo-info mb-0">
+        Demo académica: los datos se mantienen solo mientras esta página está abierta. Al recargar
+        se reinician las cuentas y la sesión. No uses una contraseña personal.
+      </p>
+    </div>
+  </aside>
+  <section class="col-12 col-md-7 col-lg-6 offset-lg-1" aria-labelledby="form-title">
+    <div class="account-card">
+      <p class="eyebrow">COMUNIDAD NEXO</p>
+      @switch (mode()) {
+        @case ('login') {
+          <h2 id="form-title">Iniciar sesión</h2>
+          <p class="form-description">Entra para seguir la conversación.</p>
+        }
+        @case ('register') {
+          <h2 id="form-title">Crear una cuenta</h2>
+          <p class="form-description">Unos pocos datos para empezar a compartir.</p>
+        }
+        @case ('recovery') {
+          <h2 id="form-title">Recuperar contraseña</h2>
+          <p class="form-description">Ingresa el correo de tu cuenta de demostración.</p>
+        }
+        @case ('reset') {
+          <h2 id="form-title">Restablecer contraseña</h2>
+          <p class="form-description">
+            El enlace de prueba vence en 15 minutos y solo puede usarse una vez.
+          </p>
+        }
+        @case ('profile') {
+          <h2 id="form-title">Mi perfil</h2>
+          <p class="form-description">
+            Actualiza cómo te ve la comunidad.
+            <span class="role-badge">{{ auth.user()?.rol }}</span>
+          </p>
+        }
+      }
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+      @if (message()) {
+        <div class="alert alert-success" role="status">{{ message() }}</div>
+      }
+      @switch (mode()) {
+        @case ('login') {
+          <form [formGroup]="login" (ngSubmit)="submit()" novalidate>
+            <fieldset [disabled]="busy()">
+              <app-form-field
+                id="login-email"
+                label="Correo electrónico"
+                type="email"
+                autocomplete="username"
+                [maxLength]="150"
+                [control]="login.controls.correo"
+              />
+              <app-form-field
+                id="login-password"
+                label="Contraseña"
+                type="password"
+                autocomplete="current-password"
+                [maxLength]="64"
+                [control]="login.controls.password"
+              />
+              <div class="text-end mb-4"><a routerLink="/recuperar">Olvidé mi contraseña</a></div>
+              <button class="btn btn-primary w-100" type="submit">
+                {{ busy() ? 'Ingresando…' : 'Iniciar sesión' }}
+              </button>
+            </fieldset>
+          </form>
+          <p class="account-switch">
+            ¿Primera vez por aquí? <a routerLink="/registro">Crear una cuenta</a>
+          </p>
+          <details class="demo-accounts">
+            <summary>Cuentas de demostración</summary>
+            <p class="mt-2 mb-1">
+              USUARIO: <code>usuario@nexo.demo</code><br />ADMIN: <code>admin@nexo.demo</code>
+            </p>
+            <p class="mb-0">Contraseña para ambas: <code>NexoDemo2026!</code></p>
+          </details>
+        }
+        @case ('register') {
+          <form [formGroup]="register" (ngSubmit)="submit()" novalidate>
+            <fieldset [disabled]="busy()">
+              <app-form-field
+                id="register-name"
+                label="Nombre"
+                autocomplete="name"
+                [minLength]="3"
+                [maxLength]="100"
+                [control]="register.controls.nombre"
+              />
+              <app-form-field
+                id="register-email"
+                label="Correo electrónico"
+                type="email"
+                autocomplete="email"
+                [maxLength]="150"
+                [control]="register.controls.correo"
+              />
+              <app-form-field
+                id="register-password"
+                label="Contraseña"
+                type="password"
+                autocomplete="new-password"
+                [minLength]="10"
+                [maxLength]="64"
+                [control]="register.controls.password"
+                hint="Entre 10 y 64 caracteres, mayúscula, minúscula, número y símbolo, sin espacios."
+              />
+              <app-form-field
+                id="register-confirm"
+                label="Confirmar contraseña"
+                type="password"
+                autocomplete="new-password"
+                [minLength]="10"
+                [maxLength]="64"
+                [control]="register.controls.confirmacion"
+                [mismatch]="register.hasError('mismatch')"
+              />
+              <button class="btn btn-primary w-100" type="submit">
+                {{ busy() ? 'Creando cuenta…' : 'Crear cuenta' }}
+              </button>
+            </fieldset>
+          </form>
+          <p class="account-switch">
+            ¿Ya tienes una cuenta? <a routerLink="/ingresar">Iniciar sesión</a>
+          </p>
+        }
+        @case ('recovery') {
+          <form [formGroup]="recovery" (ngSubmit)="submit()" novalidate>
+            <fieldset [disabled]="busy()">
+              <app-form-field
+                id="recovery-email"
+                label="Correo electrónico"
+                type="email"
+                autocomplete="email"
+                [maxLength]="150"
+                [control]="recovery.controls.correo"
+              />
+              <button class="btn btn-primary w-100" type="submit">
+                {{ busy() ? 'Procesando…' : 'Solicitar recuperación de prueba' }}
+              </button>
+            </fieldset>
+          </form>
+          @if (recoveryToken()) {
+            <div class="recovery-demo mt-3">
+              <strong>Simulación de correo</strong>
+              <p>Este enlace se muestra aquí únicamente para probar la recuperación local.</p>
+              <a routerLink="/restablecer" [queryParams]="{ token: recoveryToken() }"
+                >Abrir enlace de recuperación de prueba →</a
+              >
+            </div>
+          }
+          <p class="account-switch"><a routerLink="/ingresar">Volver a iniciar sesión</a></p>
+        }
+        @case ('reset') {
+          <form [formGroup]="reset" (ngSubmit)="submit()" novalidate>
+            <fieldset [disabled]="busy() || !!message()">
+              <app-form-field
+                id="reset-password"
+                label="Nueva contraseña"
+                type="password"
+                autocomplete="new-password"
+                [minLength]="10"
+                [maxLength]="64"
+                [control]="reset.controls.password"
+                hint="Entre 10 y 64 caracteres, mayúscula, minúscula, número y símbolo, sin espacios."
+              />
+              <app-form-field
+                id="reset-confirm"
+                label="Confirmar contraseña"
+                type="password"
+                autocomplete="new-password"
+                [minLength]="10"
+                [maxLength]="64"
+                [control]="reset.controls.confirmacion"
+                [mismatch]="reset.hasError('mismatch')"
+              />
+              <button class="btn btn-primary w-100" type="submit">
+                {{ busy() ? 'Guardando…' : 'Guardar nueva contraseña' }}
+              </button>
+            </fieldset>
+          </form>
+          <p class="account-switch">
+            <a routerLink="/ingresar">Iniciar sesión</a> ·
+            <a routerLink="/recuperar">Solicitar otro enlace</a>
+          </p>
+        }
+        @case ('profile') {
+          <form [formGroup]="profile" (ngSubmit)="submit()" novalidate>
+            <fieldset [disabled]="busy()">
+              <app-form-field
+                id="profile-name"
+                label="Nombre"
+                autocomplete="name"
+                [minLength]="3"
+                [maxLength]="100"
+                [control]="profile.controls.nombre"
+              />
+              <app-form-field
+                id="profile-email"
+                label="Correo electrónico"
+                type="email"
+                autocomplete="email"
+                [maxLength]="150"
+                [control]="profile.controls.correo"
+              />
+              <div class="mb-4">
+                <label for="profile-bio" class="form-label"
+                  >Biografía <span class="text-secondary">(opcional)</span></label
+                ><textarea
+                  id="profile-bio"
+                  class="form-control"
+                  rows="4"
+                  maxlength="280"
+                  formControlName="biografia"
+                  aria-describedby="bio-hint"
+                ></textarea
+                ><small id="bio-hint" class="field-hint"
+                  >{{ profile.controls.biografia.value.length }}/280 caracteres</small
+                >
+              </div>
+              <button class="btn btn-primary w-100" type="submit">
+                {{ busy() ? 'Guardando…' : 'Guardar cambios' }}
+              </button>
+            </fieldset>
+          </form>
+        }
+      }
+    </div>
+  </section>
+</div>

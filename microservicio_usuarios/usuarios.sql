@@ -6,11 +6,11 @@
 -- usuario1@foro.test: ForoUsuario12026!
 -- usuario2@foro.test: ForoUsuario22026!
 -- Los INSERT almacenan hashes BCrypt compatibles con Spring Security.
-SET DEFINE OFF;
 
 -- El script elimina la tabla usuarios y sus datos antes de recrear su estructura.
 -- La ejecucion corresponde al esquema propietario del microservicio de Usuarios.
 -- El esquema requiere CREATE TABLE, CREATE SEQUENCE y cuota en el tablespace DATA.
+-- ¡¡ CUIDADO CON EJECUTAR FUERA DEL ESQUEMA CORRESPONDIENTE !!
 BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE usuarios CASCADE CONSTRAINTS PURGE';
 EXCEPTION

@@ -1,0 +1,15 @@
+**/target/
+**/node_modules/
+**/dist/
+**/.angular/
+**/application-local.properties
+**/.env
+**/.env.*
+**/Wallet*/
+**/wallet*/
+*.log
+*.sso
+*.p12
+*.jks
+*.pem
+*.key

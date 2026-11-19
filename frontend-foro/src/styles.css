@@ -1,0 +1,125 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+:root {
+  --ink: #202923;
+  --muted: #69736c;
+  --green: #256549;
+}
+body {
+  margin: 0;
+  background: #f7f8f4;
+  color: var(--ink);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+button,
+input {
+  font: inherit;
+}
+:focus-visible {
+  outline: 3px solid #447f61 !important;
+  outline-offset: 4px;
+}
+header {
+  background: #fff;
+  border-bottom: 1px solid #e4e8e0;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: -1.5px;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  background: var(--green);
+  color: white;
+  height: 37px;
+  width: 37px;
+  border-radius: 11px;
+  font-size: 25px;
+}
+.header-caption,
+footer,
+.demo-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+.demo-label {
+  border: 1px solid #dfe5db;
+  border-radius: 30px;
+  padding: 7px 12px;
+}
+footer {
+  border-top: 1px solid #dfe5db;
+}
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  background: white;
+  padding: 12px;
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 12px;
+}
+@media (max-width: 575.98px) {
+  .header-caption {
+    display: none;
+  }
+}
+
+.btn-primary {
+  --bs-btn-bg: #256549;
+  --bs-btn-border-color: #256549;
+  --bs-btn-hover-bg: #1c5039;
+  --bs-btn-hover-border-color: #1c5039;
+  --bs-btn-active-bg: #17422f;
+  --bs-btn-active-border-color: #17422f;
+  --bs-btn-disabled-bg: #256549;
+  --bs-btn-disabled-border-color: #256549;
+}
+.account-card .btn-primary {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.account-card .form-control {
+  padding: 11px 12px;
+  border-color: #d6ddcf;
+  font-size: 14px;
+}
+.account-card .form-control:focus {
+  border-color: #648a63;
+  box-shadow: 0 0 0 3px #648a6320;
+}
+.account-card .form-control.is-invalid {
+  border-color: #dc3545;
+}
+.field-hint {
+  font-size: 11px;
+  color: #69736c;
+  line-height: 1.6;
+}
+.nav-profile {
+  font-size: 13px;
+  color: #256549;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.nav-role {
+  font-size: 9px;
+  background: #e8eedf;
+  border-radius: 5px;
+  padding: 3px 5px;
+}
+.account-nav .btn {
+  font-size: 12px;
+}

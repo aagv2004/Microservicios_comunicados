@@ -1,0 +1,28 @@
+<a class="skip-link" href="#contenido">Saltar al contenido</a>
+<header>
+  <div class="container py-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <a class="brand" routerLink="/"><span class="brand-mark">n.</span> nexo/</a>
+    <span class="header-caption">Un espacio para compartir ideas.</span>
+    <nav
+      class="account-nav d-flex align-items-center flex-wrap gap-2"
+      aria-label="Cuenta de usuario"
+    >
+      @if (auth.user(); as user) {
+        <a routerLink="/perfil" class="nav-profile"
+          >{{ user.nombre }} <span class="nav-role">{{ user.rol }}</span></a
+        >
+        <button class="btn btn-outline-secondary btn-sm" type="button" (click)="logout()">
+          Cerrar sesión
+        </button>
+      } @else {
+        <a routerLink="/ingresar" class="btn btn-outline-secondary btn-sm">Iniciar sesión</a>
+        <a routerLink="/registro" class="btn btn-primary btn-sm">Crear cuenta</a>
+      }
+    </nav>
+  </div>
+</header>
+<main id="contenido" class="container py-4 py-lg-5" tabindex="-1"><router-outlet /></main>
+<footer class="container py-4 d-flex flex-wrap justify-content-between gap-2">
+  <span>Nexo — Las buenas conversaciones empiezan aquí.</span
+  ><span>Proyecto académico · Datos de demostración</span>
+</footer>

@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<ApiError> acceso(AccessDeniedException ex) {
-        return ResponseEntity.status(403).body(ApiError.de(403, "Solo el autor puede modificar este contenido"));
+        return ResponseEntity.status(403).body(ApiError.de(403, "No tienes permiso para esta operacion"));
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class, OptimisticLockingFailureException.class})

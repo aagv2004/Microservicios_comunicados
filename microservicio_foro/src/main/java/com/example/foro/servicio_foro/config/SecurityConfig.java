@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/moderacion/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/categorias", "/api/categorias/**",
                                 "/api/temas", "/api/temas/**", "/api/comentarios/**").permitAll()
                         .requestMatchers("/api/categorias", "/api/categorias/**").hasRole("ADMIN")

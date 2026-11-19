@@ -91,6 +91,7 @@ public class ForoService {
         if (autorId != null) idPositivo(autorId);
         Specification<Tema> filtros = (root, query, cb) -> {
             var condiciones = new ArrayList<Predicate>();
+            condiciones.add(cb.isFalse(root.get("bloqueado")));
             if (texto != null && !texto.isBlank()) {
                 // Tratar %, _ y la barra como texto, no como comodines del cliente.
                 String literal = texto.strip().toLowerCase(Locale.ROOT)
@@ -143,7 +144,7 @@ public class ForoService {
 
     public PaginaResponse<ComentarioResponse> listarComentarios(Long temaId, int pagina, int tamanio) {
         tema(temaId);
-        return PaginaResponse.de(comentarios.findByTemaId(temaId, pagina(pagina, tamanio, "creadoEn", false))
+        return PaginaResponse.de(comentarios.findByTemaIdAndBloqueadoFalse(temaId, pagina(pagina, tamanio, "creadoEn", false))
                 .map(ComentarioResponse::de));
     }
 
@@ -184,12 +185,15 @@ public class ForoService {
 
     private Tema tema(Long id) {
         idPositivo(id);
-        return temas.findById(id).orElseThrow(() -> noEncontrado("Tema"));
+        return temas.findById(id).filter(tema -> !tema.isBloqueado())
+                .orElseThrow(() -> noEncontrado("Tema"));
     }
 
     private Comentario comentario(Long id) {
         idPositivo(id);
-        return comentarios.findById(id).orElseThrow(() -> noEncontrado("Comentario"));
+        return comentarios.findById(id)
+                .filter(comentario -> !comentario.isBloqueado() && !comentario.getTema().isBloqueado())
+                .orElseThrow(() -> noEncontrado("Comentario"));
     }
 
     private ApiException noEncontrado(String recurso) {

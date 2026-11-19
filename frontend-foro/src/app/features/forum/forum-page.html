@@ -1,0 +1,119 @@
+<section class="hero mb-4 mb-lg-5" aria-labelledby="hero-title">
+  <div class="row align-items-center g-4">
+    <div class="col-12 col-md-9">
+      <p class="eyebrow">● IDEAS DISTINTAS. UN MISMO ESPACIO.</p>
+      <h1 id="hero-title">
+        Conversemos de lo<br class="d-none d-md-block" />
+        que nos mueve<span>.</span>
+      </h1>
+      <p class="hero-copy mb-0">
+        Pregunta, descubre y comparte. Tu próxima buena idea<br class="d-none d-lg-block" />
+        puede empezar con una conversación.
+      </p>
+    </div>
+    <div class="col-12 col-md-3 hero-art d-none d-md-block" aria-hidden="true">
+      <span>hola.</span><small>↗ conectemos ideas</small>
+    </div>
+  </div>
+</section>
+<div class="row g-4">
+  <aside class="col-12 col-md-4 col-lg-3" aria-label="Categorías del foro">
+    <h2 class="section-label">EXPLORA EL FORO</h2>
+    <nav class="category-list" aria-label="Filtrar por categoría">
+      <button
+        type="button"
+        class="category-button"
+        [class.active]="category() === ''"
+        [attr.aria-pressed]="category() === ''"
+        (click)="category.set('')"
+      >
+        <span aria-hidden="true">▦</span> Todas las conversaciones
+      </button>
+      @for (item of forum.categories; track item.id) {
+        <button
+          type="button"
+          class="category-button"
+          [class.active]="category() === item.id"
+          [attr.aria-pressed]="category() === item.id"
+          (click)="category.set(item.id)"
+        >
+          <span aria-hidden="true">{{ item.symbol }}</span>{{ item.name }}
+        </button>
+      }
+    </nav>
+    <div class="community-note mt-4 d-none d-md-block">
+      <span aria-hidden="true">✦</span>
+      <h3>Un buen espacio lo hacemos entre todos.</h3>
+      <p class="mb-0">Comparte con respeto, da contexto a tus preguntas y mantén la curiosidad.</p>
+    </div>
+  </aside>
+  <section class="col-12 col-md-8 col-lg-9" aria-labelledby="topics-title">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div>
+        <p class="section-label mb-2">EL PUNTO DE ENCUENTRO</p>
+        <h2 id="topics-title">
+          {{ category() ? categoryName(category()) : 'Conversaciones recientes' }}
+        </h2>
+      </div>
+      <span class="result-count" aria-live="polite">{{ topics().length }} conversaciones</span>
+    </div>
+    <div class="search-box mb-3">
+      <span aria-hidden="true">⌕</span
+      ><label class="visually-hidden" for="topic-search"
+        >Buscar conversaciones por título, contenido o autor</label
+      ><input
+        id="topic-search"
+        type="search"
+        class="form-control"
+        placeholder="Busca una idea, una pregunta, un tema…"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+      />
+    </div>
+    <div class="topic-list">
+      @for (topic of topics(); track topic.id) {
+        <article class="topic-card">
+          <span class="topic-category" [attr.data-category]="topic.categoryId">{{
+            categoryName(topic.categoryId)
+          }}</span>
+          <h3>
+            <button
+              class="topic-title"
+              type="button"
+              [attr.aria-expanded]="expanded() === topic.id"
+              [attr.aria-controls]="'topic-' + topic.id"
+              (click)="expanded.set(expanded() === topic.id ? null : topic.id)"
+            >
+              {{ topic.title }}
+            </button>
+          </h3>
+          <p class="topic-excerpt">{{ topic.excerpt }}</p>
+          <div class="d-flex align-items-center justify-content-between gap-2">
+            <span class="author"
+              ><span class="avatar" aria-hidden="true">{{ topic.initials }}</span
+              >{{ topic.author }}</span
+            ><span class="reply-count">{{ topic.replies }} respuestas</span>
+          </div>
+          @if (expanded() === topic.id) {
+            <div class="topic-preview mt-3" [id]="'topic-' + topic.id">
+              <strong>Vista previa de la conversación</strong>
+              <p class="mb-0 mt-2">{{ topic.excerpt }}</p>
+              <small
+                >La publicación y los comentarios se incorporarán en el siguiente bloque.</small
+              >
+            </div>
+          }
+        </article>
+      } @empty {
+        <div class="empty-state">
+          <h3>No encontramos conversaciones</h3>
+          <p>Prueba con otras palabras o explora una categoría diferente.</p>
+          <button type="button" class="btn btn-dark" (click)="reset()">Limpiar filtros</button>
+        </div>
+      }
+    </div>
+    <p class="demo-note mt-3">
+      Estás explorando una vista de demostración con conversaciones de ejemplo.
+    </p>
+  </section>
+</div>

@@ -232,6 +232,58 @@ class ServicioForoApplicationTests {
         assertThat(HTTP.send(peticion, HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(400);
     }
 
+    @Test void bloqueoTemaOcultaContenidoYReaperturaLoRestaura() throws Exception {
+        var comentario = service.comentar(temaId, new ComentarioRequest("Comentario existente"), AUTOR);
+        String ruta = "/api/moderacion/temas/" + temaId;
+        var bloqueo = enviar("PUT", ruta, Map.of("bloqueado", true, "motivo", "Incumple normas"), "test-admin");
+        assertThat(bloqueo.statusCode()).isEqualTo(200);
+        assertThat(json(bloqueo).get("moderadorId").asLong()).isEqualTo(100L);
+        assertThat(temas.findById(temaId).orElseThrow().isBloqueado()).isTrue();
+        assertThat(enviar("GET", "/api/temas/" + temaId, null, null).statusCode()).isEqualTo(404);
+        assertThat(json(enviar("GET", "/api/temas", null, null)).get("totalElementos").asLong()).isZero();
+        assertThat(enviar("GET", "/api/comentarios/" + comentario.id(), null, null).statusCode()).isEqualTo(404);
+        assertThat(enviar("POST", "/api/temas/" + temaId + "/comentarios", Map.of("contenido", "Nuevo"), "test-autor").statusCode()).isEqualTo(404);
+        assertThat(enviar("PUT", "/api/temas/" + temaId, temaDatos("Intento editar", categoriaId), "test-autor").statusCode()).isEqualTo(404);
+        assertThat(enviar("PUT", ruta, Map.of("bloqueado", false, "motivo", "Revision aprobada"), "test-admin").statusCode()).isEqualTo(200);
+        assertThat(enviar("GET", "/api/temas/" + temaId, null, null).statusCode()).isEqualTo(200);
+        assertThat(enviar("GET", "/api/comentarios/" + comentario.id(), null, null).statusCode()).isEqualTo(200);
+    }
+
+    @Test void bloqueoComentarioNoBorraDatosNiSeRevierteEditando() throws Exception {
+        var comentario = service.comentar(temaId, new ComentarioRequest("Contenido original"), AUTOR);
+        String ruta = "/api/moderacion/comentarios/" + comentario.id();
+        assertThat(enviar("PUT", ruta, Map.of("bloqueado", true, "motivo", "Spam"), "test-admin").statusCode()).isEqualTo(200);
+        var guardado = comentarios.findById(comentario.id()).orElseThrow();
+        assertThat(guardado.getContenido()).isEqualTo("Contenido original");
+        assertThat(guardado.getMotivoBloqueo()).isEqualTo("Spam");
+        assertThat(json(enviar("GET", "/api/temas/" + temaId + "/comentarios", null, null)).get("totalElementos").asLong()).isZero();
+        assertThat(enviar("PUT", "/api/comentarios/" + comentario.id(), Map.of("contenido", "Editado"), "test-autor").statusCode()).isEqualTo(404);
+        assertThat(enviar("DELETE", "/api/comentarios/" + comentario.id(), null, "test-autor").statusCode()).isEqualTo(404);
+        assertThat(enviar("PUT", ruta, Map.of("bloqueado", false, "motivo", "Restaurado"), "test-admin").statusCode()).isEqualTo(200);
+        assertThat(json(enviar("GET", "/api/temas/" + temaId + "/comentarios", null, null)).get("totalElementos").asLong()).isEqualTo(1);
+    }
+
+    @Test void moderacionRechazaAnonimosYUsuariosIncluidoElAutor() throws Exception {
+        var datos = Map.of("bloqueado", true, "motivo", "Normas");
+        String ruta = "/api/moderacion/temas/" + temaId;
+        assertThat(enviar("PUT", ruta, datos, null).statusCode()).isEqualTo(401);
+        assertThat(enviar("PUT", ruta, datos, "test-autor").statusCode()).isEqualTo(403);
+        assertThat(enviar("PUT", ruta, datos, "test-otro").statusCode()).isEqualTo(403);
+        assertThat(temas.findById(temaId).orElseThrow().isBloqueado()).isFalse();
+    }
+
+    @Test void moderacionValidaEstadoMotivoEIdentificadores() throws Exception {
+        String ruta = "/api/moderacion/temas/" + temaId;
+        for (var datos : List.of(Map.of("bloqueado", true, "motivo", " "),
+                Map.of("motivo", "Falta estado"), Map.of("bloqueado", true, "motivo", "x".repeat(501)))) {
+            assertThat(enviar("PUT", ruta, datos, "test-admin").statusCode()).isEqualTo(400);
+        }
+        var datos = Map.of("bloqueado", true, "motivo", "Normas");
+        assertThat(enviar("PUT", "/api/moderacion/temas/0", datos, "test-admin").statusCode()).isEqualTo(400);
+        assertThat(enviar("PUT", "/api/moderacion/temas/999999", datos, "test-admin").statusCode()).isEqualTo(404);
+        assertThat(enviar("PUT", "/api/moderacion/comentarios/999999", datos, "test-admin").statusCode()).isEqualTo(404);
+    }
+
     private Map<String, Object> temaDatos(String titulo, Long categoria) {
         return Map.of("titulo", titulo, "contenido", "Contenido de prueba", "categoriaId", categoria);
     }
