@@ -8,6 +8,9 @@
       aria-label="Cuenta de usuario"
     >
       @if (auth.user(); as user) {
+        @if (user.rol === 'ADMIN') {
+          <a routerLink="/moderacion" class="btn btn-outline-secondary btn-sm">Moderación</a>
+        }
         <a routerLink="/perfil" class="nav-profile"
           >{{ user.nombre }} <span class="nav-role">{{ user.rol }}</span></a
         >

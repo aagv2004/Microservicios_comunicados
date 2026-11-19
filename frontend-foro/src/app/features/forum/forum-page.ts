@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { ForumService } from '../../core/services/forum.service';
 @Component({
   selector: 'app-forum-page',
+  imports: [RouterLink],
   templateUrl: './forum-page.html',
   styleUrl: './forum-page.css',
 })
@@ -9,14 +12,16 @@ export class ForumPage {
   protected readonly forum = inject(ForumService);
   protected readonly category = signal('');
   protected readonly query = signal('');
-  protected readonly expanded = signal<number | null>(null);
+  protected readonly auth = inject(AuthService);
   protected readonly topics = computed(() => {
     const query = this.normalize(this.query().trim());
-    return this.forum.topics.filter(
-      (topic) =>
-        (!this.category() || topic.categoryId === this.category()) &&
-        this.normalize(`${topic.title} ${topic.excerpt} ${topic.author}`).includes(query),
-    );
+    return this.forum
+      .topics()
+      .filter(
+        (topic) =>
+          (!this.category() || topic.categoryId === this.category()) &&
+          this.normalize(`${topic.title} ${topic.content} ${topic.author}`).includes(query),
+      );
   });
   protected categoryName(id: string): string {
     return this.forum.categories.find((category) => category.id === id)?.name ?? '';

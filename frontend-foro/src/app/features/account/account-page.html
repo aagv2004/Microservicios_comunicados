@@ -1,5 +1,14 @@
-<div class="row g-4 g-lg-5 align-items-start account-layout">
-  <section class="col-12 col-md-7 col-lg-6 offset-lg-1" aria-labelledby="form-title">
+<div
+  class="row g-4 g-lg-5 align-items-start account-layout"
+  [class.justify-content-center]="mode() !== 'profile'"
+>
+  <section
+    class="col-12"
+    [class.col-md-7]="mode() !== 'profile'"
+    [class.col-lg-6]="mode() !== 'profile'"
+    [class.col-lg-5]="mode() === 'profile'"
+    aria-labelledby="form-title"
+  >
     <a routerLink="/" class="back-link d-inline-block mb-3">← Volver al foro</a>
     <div class="account-card">
       <p class="eyebrow">COMUNIDAD NEXO</p>
@@ -224,4 +233,53 @@
       }
     </div>
   </section>
+  @if (mode() === 'profile') {
+    <section class="col-12 col-lg-7 publications-column" aria-labelledby="my-topics-title">
+      <div class="account-card">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div>
+            <p class="eyebrow mb-2">TU ACTIVIDAD</p>
+            <h2 id="my-topics-title" class="mb-0">Mis publicaciones</h2>
+          </div>
+          <a routerLink="/temas/nuevo" class="btn btn-primary btn-sm text-white">Publicar tema</a>
+        </div>
+        <p class="form-description">{{ myTopics().length }} conversaciones publicadas.</p>
+        @for (topic of myTopics(); track topic.id) {
+          <article class="publication-item">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span class="publication-category">{{ forum.categoryName(topic.categoryId) }}</span
+              ><span class="publication-status" [class.is-blocked]="topic.blocked">{{
+                topic.blocked ? 'Bloqueada' : 'Visible'
+              }}</span>
+            </div>
+            <h3 class="publication-title">
+              @if (topic.blocked) {
+                {{ topic.title }}
+              } @else {
+                <a [routerLink]="['/temas', topic.id]">{{ topic.title }}</a>
+              }
+            </h3>
+            <p class="publication-excerpt">{{ topic.excerpt }}</p>
+            @if (topic.blocked) {
+              <p class="publication-reason">Motivo: {{ topic.moderationReason }}</p>
+            }
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+              <span class="field-hint">{{ topic.replies }} comentarios visibles</span>
+              @if (!topic.blocked) {
+                <a [routerLink]="['/temas', topic.id, 'editar']">Editar publicación →</a>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="publications-empty">
+            <h3>Todavía no has publicado</h3>
+            <p>Comparte una pregunta o una idea con la comunidad.</p>
+            <a routerLink="/temas/nuevo" class="btn btn-outline-secondary"
+              >Crear mi primera publicación</a
+            >
+          </div>
+        }
+      </div>
+    </section>
+  }
 </div>

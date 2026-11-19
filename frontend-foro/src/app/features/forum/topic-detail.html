@@ -1,0 +1,169 @@
+<div class="conversation-shell mx-auto">
+  <a routerLink="/" class="back-link d-inline-block mb-4">← Volver al foro</a>
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  }
+  @if (message()) {
+    <div class="alert alert-success" role="status">{{ message() }}</div>
+  }
+  @if (topic(); as topic) {
+    <article class="conversation-card mb-4">
+      <span class="category-tag">{{ forum.categoryName(topic.categoryId) }}</span>
+      <h1 class="mt-3">{{ topic.title }}</h1>
+      <p class="content-meta">
+        {{ topic.author }} · {{ topic.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+        @if (topic.updatedAt !== topic.createdAt) {
+          · Editado
+        }
+      </p>
+      <p class="content-body">{{ topic.content }}</p>
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        @if (forum.canEdit(topic)) {
+          <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/temas', topic.id, 'editar']"
+            >Editar tema</a
+          ><button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            (click)="deleting.set({ type: 'topic', id: topic.id })"
+          >
+            Eliminar tema
+          </button>
+        }
+        @if (auth.user()?.rol === 'ADMIN') {
+          <a class="btn btn-outline-secondary btn-sm" routerLink="/moderacion">Moderar contenido</a>
+        }
+      </div>
+    </article>
+    @if (deleting()) {
+      <div class="alert alert-warning" role="alert">
+        <p>
+          ¿Eliminar {{ deleting()?.type === 'topic' ? 'esta conversación' : 'este comentario' }}?
+          Esta acción no se puede deshacer.
+        </p>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-danger btn-sm" (click)="confirmDelete()">
+            Sí, eliminar</button
+          ><button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            (click)="deleting.set(null)"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    }
+    <section aria-labelledby="comments-title">
+      <h2 id="comments-title" class="mb-3">
+        Comentarios <span class="text-secondary">({{ comments().length }})</span>
+      </h2>
+      @for (comment of comments(); track comment.id) {
+        <article class="conversation-card comment-card mb-3">
+          <div class="d-flex flex-wrap justify-content-between gap-2">
+            <strong>{{ comment.author }}</strong><span class="content-meta"
+              >{{ comment.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+              @if (comment.updatedAt !== comment.createdAt) {
+                · Editado
+              }
+            </span>
+          </div>
+          @if (editingComment() === comment.id && forum.canEdit(comment)) {
+            <form [formGroup]="editForm" (ngSubmit)="saveComment()" novalidate class="mt-3">
+              <label [for]="'edit-' + comment.id" class="form-label">Editar comentario</label
+              ><textarea
+                [id]="'edit-' + comment.id"
+                class="form-control mb-2"
+                formControlName="content"
+                required
+                maxlength="5000"
+                rows="4"
+                [class.is-invalid]="editForm.controls.content.touched && editForm.invalid"
+              ></textarea>
+              @if (editForm.controls.content.touched && editForm.invalid) {
+                <p class="text-danger field-hint">
+                  Escribe un comentario de hasta 5000 caracteres.
+                </p>
+              }
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-sm" type="submit">Guardar</button
+                ><button
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                  (click)="editingComment.set(null)"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          } @else {
+            <p class="content-body mb-0 mt-3">{{ comment.content }}</p>
+          }
+          @if (forum.canEdit(comment) && editingComment() !== comment.id) {
+            <div class="d-flex gap-2 mt-3">
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                (click)="startEdit(comment.id, comment.content)"
+              >
+                Editar</button
+              ><button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                (click)="deleting.set({ type: 'comment', id: comment.id })"
+              >
+                Eliminar
+              </button>
+            </div>
+          }
+          @if (auth.user()?.rol === 'ADMIN') {
+            <div class="mt-3">
+              <a
+                class="btn btn-outline-danger btn-sm"
+                routerLink="/moderacion"
+                [queryParams]="{ tipo: 'comment', id: comment.id }"
+                >Bloquear comentario</a
+              >
+            </div>
+          }
+        </article>
+      } @empty {
+        <p class="empty-comments">Todavía no hay comentarios. Abre la conversación.</p>
+      }
+      @if (auth.user()) {
+        <form class="conversation-card mt-4" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <label class="form-label" for="new-comment">Tu comentario</label
+          ><textarea
+            id="new-comment"
+            class="form-control"
+            formControlName="content"
+            required
+            maxlength="5000"
+            rows="4"
+            [class.is-invalid]="form.controls.content.touched && form.invalid"
+            [attr.aria-invalid]="form.controls.content.touched && form.invalid"
+            aria-describedby="comment-hint"
+          ></textarea
+          ><small id="comment-hint" class="field-hint"
+            >{{ form.controls.content.value.length }}/5000 caracteres.</small
+          >
+          @if (form.controls.content.touched && form.invalid) {
+            <p class="text-danger field-hint">
+              El comentario no puede estar vacío ni contener solo espacios.
+            </p>
+          }
+          <button class="btn btn-primary d-block mt-3" type="submit">Publicar comentario</button>
+        </form>
+      } @else {
+        <div class="conversation-card mt-4">
+          <a routerLink="/ingresar">Inicia sesión</a> para participar en la conversación.
+        </div>
+      }
+    </section>
+  } @else {
+    <section class="conversation-card">
+      <h1>Conversación no disponible</h1>
+      <p>El tema no existe o está fuera de la vista pública.</p>
+      <a routerLink="/">Explorar otras conversaciones</a>
+    </section>
+  }
+</div>

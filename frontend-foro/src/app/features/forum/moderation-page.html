@@ -1,0 +1,139 @@
+<div class="moderation-shell mx-auto">
+  <a routerLink="/" class="back-link d-inline-block mb-4">← Volver al foro</a>
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <p class="eyebrow">CUIDEMOS LA COMUNIDAD</p>
+      <h1>Moderación</h1>
+      <p class="text-secondary">
+        Bloquea o restaura contenido e indica el motivo de cada decisión.
+      </p>
+    </div>
+    <span class="category-tag">ADMIN</span>
+  </div>
+  @if (message()) {
+    <div class="alert alert-success" role="status">{{ message() }}</div>
+  }
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  }
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6">
+      <label class="form-label" for="moderation-state">Estado</label
+      ><select
+        id="moderation-state"
+        class="form-select"
+        [value]="filter()"
+        (change)="filter.set($any($event.target).value)"
+      >
+        <option value="all">Todos los estados</option>
+        <option value="blocked">Bloqueados</option>
+        <option value="visible">Sin bloqueo individual</option>
+      </select>
+    </div>
+    <div class="col-12 col-sm-6">
+      <label class="form-label" for="moderation-type">Tipo de contenido</label
+      ><select
+        id="moderation-type"
+        class="form-select"
+        [value]="type()"
+        (change)="type.set($any($event.target).value)"
+      >
+        <option value="all">Temas y comentarios</option>
+        <option value="topic">Temas</option>
+        <option value="comment">Comentarios</option>
+      </select>
+    </div>
+  </div>
+  @if (selected(); as item) {
+    <dialog
+      id="moderation-decision"
+      (cancel)="cancel()"
+      class="conversation-card moderation-dialog"
+      aria-labelledby="decision-title"
+    >
+      <h2 id="decision-title">
+        {{ item.blocked ? 'Restaurar' : 'Bloquear' }}
+        {{ item.type === 'topic' ? 'tema' : 'comentario' }}
+      </h2>
+      <p class="moderation-preview">{{ item.title }}</p>
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label class="form-label" for="moderation-reason">Motivo de la decisión</label
+        ><textarea
+          id="moderation-reason"
+          autofocus
+          class="form-control"
+          required
+          maxlength="500"
+          rows="3"
+          formControlName="reason"
+          [class.is-invalid]="form.controls.reason.touched && form.invalid"
+          [attr.aria-invalid]="form.controls.reason.touched && form.invalid"
+          aria-describedby="reason-hint"
+        ></textarea
+        ><small id="reason-hint" class="field-hint"
+          >{{ form.controls.reason.value.length }}/500 caracteres.</small
+        >
+        @if (form.controls.reason.touched && form.invalid) {
+          <p class="text-danger field-hint">Indica un motivo; no puede contener solo espacios.</p>
+        }
+        <div class="d-flex gap-2 mt-3">
+          <button
+            class="btn"
+            [class.btn-primary]="item.blocked"
+            [class.btn-danger]="!item.blocked"
+            type="submit"
+          >
+            Confirmar {{ item.blocked ? 'restauración' : 'bloqueo' }}</button
+          ><button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </dialog>
+  }
+  <p class="field-hint" aria-live="polite">{{ items().length }} elementos</p>
+  @for (item of items(); track item.type + item.id) {
+    <article class="conversation-card mb-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div class="moderation-copy">
+          <span class="content-meta"
+            >{{ item.type === 'topic' ? 'Tema' : 'Comentario' }} · {{ item.author }}</span
+          >
+          <h2 class="moderation-preview mt-2">{{ item.title }}</h2>
+          <span class="status-tag" [class.blocked]="item.blocked">{{
+            item.blocked ? 'Bloqueado' : 'Sin bloqueo individual'
+          }}</span>
+          @if (item.parentBlocked) {
+            <p class="text-secondary small mt-2 mb-0">
+              Oculto porque la conversación está bloqueada.
+            </p>
+          }
+          @if (item.reason) {
+            <p class="small mt-2 mb-0 content-body">Último motivo: {{ item.reason }}</p>
+          }
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            type="button"
+            class="btn btn-sm"
+            [class.btn-outline-danger]="!item.blocked"
+            [class.btn-outline-success]="item.blocked"
+            (click)="select(item)"
+          >
+            {{ item.blocked ? 'Restaurar' : 'Bloquear' }}
+          </button>
+          @if (!item.blocked && !item.parentBlocked) {
+            <a class="btn btn-outline-secondary btn-sm" [routerLink]="['/temas', item.topicId]"
+              >Ver conversación</a
+            >
+          }
+        </div>
+      </div>
+    </article>
+  } @empty {
+    <div class="conversation-card"><p class="mb-0">No hay contenido para estos filtros.</p></div>
+  }
+</div>

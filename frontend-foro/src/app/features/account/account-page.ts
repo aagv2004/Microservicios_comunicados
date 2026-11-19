@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { ForumService } from '../../core/services/forum.service';
 import { FormField } from '../../shared/forms/form-field';
 import {
   emailValidators,
@@ -19,6 +20,8 @@ import {
 })
 export class AccountPage {
   protected readonly auth = inject(AuthService);
+  protected readonly forum = inject(ForumService);
+  protected readonly myTopics = computed(() => this.forum.myTopics());
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder).nonNullable;

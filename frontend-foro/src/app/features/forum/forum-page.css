@@ -245,3 +245,7 @@ h2.section-label {
     padding: 18px;
   }
 }
+
+.topic-title {
+  text-decoration: none;
+}

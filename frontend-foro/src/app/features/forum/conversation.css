@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+.conversation-shell {
+  max-width: 860px;
+}
+.moderation-shell {
+  max-width: 1040px;
+}
+.back-link {
+  color: #52634d;
+  font-size: 13px;
+  text-decoration: none;
+}
+.conversation-card {
+  background: #fff;
+  border: 1px solid #dfe5da;
+  border-radius: 16px;
+  padding: clamp(20px, 4vw, 36px);
+}
+h1 {
+  font-size: clamp(25px, 3.3vw, 38px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  overflow-wrap: anywhere;
+}
+h2 {
+  font-size: 20px;
+  letter-spacing: -0.4px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  font-weight: 750;
+  color: #50614d;
+}
+.category-tag,
+.status-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 5px 9px;
+  background: #e8eedf;
+  color: #395d3d;
+  border-radius: 6px;
+}
+.status-tag.blocked {
+  background: #fbe9e7;
+  color: #a43c36;
+}
+.content-meta {
+  font-size: 12px;
+  color: #69736c;
+}
+.content-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.85;
+}
+.comment-card {
+  padding: 22px;
+}
+.empty-comments {
+  color: #69736c;
+  font-size: 14px;
+  padding: 20px 0;
+}
+.form-control,
+.form-select {
+  padding: 11px 12px;
+  font-size: 14px;
+  border-color: #d6ddcf;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #648a63;
+  box-shadow: 0 0 0 3px #648a6320;
+}
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+}
+.moderation-preview {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 17px;
+  line-height: 1.5;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.moderation-copy {
+  flex: 1 1 250px;
+  min-width: 0;
+}
+@media (max-width: 575.98px) {
+  .conversation-card {
+    padding: 20px;
+  }
+}
+
+.moderation-dialog {
+  width: min(640px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  overflow-y: auto;
+  color: var(--ink);
+  box-shadow: 0 20px 70px #14251c40;
+}
+.moderation-dialog::backdrop {
+  background: #18241dd0;
+}

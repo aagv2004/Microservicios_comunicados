@@ -1,0 +1,81 @@
+<div class="conversation-shell mx-auto">
+  <a routerLink="/" class="back-link d-inline-block mb-4">← Volver al foro</a>
+  @if (allowed()) {
+    <section class="conversation-card" aria-labelledby="editor-title">
+      <p class="eyebrow">COMPARTE UNA IDEA</p>
+      <h1 id="editor-title">{{ editing ? 'Editar conversación' : 'Nueva conversación' }}</h1>
+      <p class="text-secondary">Dale contexto a tu pregunta y elige dónde compartirla.</p>
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="mb-3">
+          <label for="topic-title" class="form-label">Título</label
+          ><input
+            id="topic-title"
+            class="form-control"
+            formControlName="title"
+            required
+            minlength="3"
+            maxlength="150"
+            [class.is-invalid]="form.controls.title.touched && form.controls.title.invalid"
+            [attr.aria-invalid]="form.controls.title.touched && form.controls.title.invalid"
+            aria-describedby="title-hint"
+          /><small id="title-hint" class="field-hint"
+            >Entre 3 y 150 caracteres. {{ form.controls.title.value.length }}/150</small
+          >
+        </div>
+        <div class="mb-3">
+          <label for="topic-category" class="form-label">Categoría</label
+          ><select
+            id="topic-category"
+            class="form-select"
+            formControlName="categoryId"
+            required
+            [class.is-invalid]="
+              form.controls.categoryId.touched && form.controls.categoryId.invalid
+            "
+            [attr.aria-invalid]="
+              form.controls.categoryId.touched && form.controls.categoryId.invalid
+            "
+          >
+            <option value="">Selecciona una categoría</option>
+            @for (category of forum.categories; track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="topic-content" class="form-label">Contenido</label
+          ><textarea
+            id="topic-content"
+            class="form-control"
+            formControlName="content"
+            required
+            maxlength="10000"
+            rows="9"
+            [class.is-invalid]="form.controls.content.touched && form.controls.content.invalid"
+            [attr.aria-invalid]="form.controls.content.touched && form.controls.content.invalid"
+            aria-describedby="content-hint"
+          ></textarea
+          ><small id="content-hint" class="field-hint"
+            >{{ form.controls.content.value.length }}/10000 caracteres.</small
+          >
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-primary" type="submit">
+            {{ editing ? 'Guardar cambios' : 'Publicar conversación' }}</button
+          ><a class="btn btn-outline-secondary" [routerLink]="editing ? ['/temas', id] : ['/']"
+            >Cancelar</a
+          >
+        </div>
+      </form>
+    </section>
+  } @else {
+    <div class="conversation-card">
+      <h1>No puedes editar esta conversación</h1>
+      <p>Solo su autor puede editarla mientras esté disponible.</p>
+      <a routerLink="/">Volver al foro</a>
+    </div>
+  }
+</div>

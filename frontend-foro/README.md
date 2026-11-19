@@ -13,14 +13,18 @@ Abrir `http://localhost:4200`. `npm run build` genera la compilación de producc
 
 ## Rutas
 
-| Ruta | Función |
-| --- | --- |
-| `/` | Categorías, búsqueda y conversaciones de ejemplo |
-| `/ingresar` | Inicio de sesión |
-| `/registro` | Registro de usuario |
-| `/recuperar` | Solicitud de recuperación simulada |
-| `/restablecer?token=...` | Restablecimiento mediante enlace temporal |
-| `/perfil` | Edición de nombre, correo y biografía; requiere sesión |
+| Ruta                     | Función                                                |
+| ------------------------ | ------------------------------------------------------ |
+| `/`                      | Categorías, búsqueda y conversaciones de ejemplo       |
+| `/ingresar`              | Inicio de sesión                                       |
+| `/registro`              | Registro de usuario                                    |
+| `/recuperar`             | Solicitud de recuperación simulada                     |
+| `/restablecer?token=...` | Restablecimiento mediante enlace temporal              |
+| `/perfil`                | Edición de nombre, correo y biografía; requiere sesión |
+| `/temas/nuevo`           | Publicación de temas; requiere sesión                  |
+| `/temas/:id`             | Detalle público y comentarios                          |
+| `/temas/:id/editar`      | Edición exclusiva del autor                            |
+| `/moderacion`            | Bloqueo y restauración; requiere ADMIN                 |
 
 ## Cuentas de demostración
 
@@ -52,6 +56,16 @@ La recuperación no envía correos: el enlace se presenta en la pantalla como si
 
 Grid Bootstrap de 12 columnas. En la portada, móvil usa una columna; tablet, distribución 4+8; escritorio, 3+9. Los formularios apilan introducción y campos en móvil y los distribuyen en columnas desde tablet. Anchos de revisión: 390, 768 y 1440 píxeles.
 
+## Operaciones del foro
+
+Los temas admiten título de 3 a 150 caracteres, categoría existente y contenido de hasta 10000 caracteres. Los comentarios admiten hasta 5000 caracteres. Los campos obligatorios no aceptan solo espacios. El texto se muestra mediante interpolación, sin interpretar HTML.
+
+Los visitantes pueden buscar y leer contenido público. Una sesión activa permite publicar y comentar. Solo el autor puede editar o eliminar su contenido disponible. No se elimina un tema que tenga comentarios, incluidos los bloqueados.
+
+ADMIN puede bloquear y restaurar temas y comentarios con un motivo de 1 a 500 caracteres. La moderación conserva la autoría y el contenido. Un tema bloqueado oculta también sus comentarios; restaurarlo conserva los bloqueos individuales de esos comentarios. El panel permite filtrar por estado y tipo, y revisar el último motivo. Los contadores reflejan los comentarios visibles.
+
+Las reglas se verifican tanto al mostrar acciones y navegar como en los métodos de ForumService. Las pruebas cubren permisos, autoría, bloqueo, restauración, contadores y validaciones.
+
 ## Alcance
 
-El frontend funciona separado de las APIs. Publicación de temas, gestión de comentarios y panel de moderación están pendientes. Los roles del navegador solo controlan la simulación; la autorización real pertenece a los microservicios.
+El frontend funciona separado de las APIs. Los temas, comentarios y decisiones de moderación se mantienen en memoria y se reinician al recargar, junto con las cuentas. Cerrar sesión y volver a ingresar no elimina ese contenido. Los roles del navegador controlan la simulación; la autorización real pertenece a los microservicios.

@@ -55,7 +55,12 @@
           {{ category() ? categoryName(category()) : 'Conversaciones recientes' }}
         </h2>
       </div>
-      <span class="result-count" aria-live="polite">{{ topics().length }} conversaciones</span>
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <span class="result-count" aria-live="polite">{{ topics().length }} conversaciones</span
+        ><a class="btn btn-primary btn-sm" [routerLink]="auth.user() ? '/temas/nuevo' : '/ingresar'"
+          >Publicar tema</a
+        >
+      </div>
     </div>
     <div class="search-box mb-3">
       <span aria-hidden="true">⌕</span
@@ -77,15 +82,7 @@
             categoryName(topic.categoryId)
           }}</span>
           <h3>
-            <button
-              class="topic-title"
-              type="button"
-              [attr.aria-expanded]="expanded() === topic.id"
-              [attr.aria-controls]="'topic-' + topic.id"
-              (click)="expanded.set(expanded() === topic.id ? null : topic.id)"
-            >
-              {{ topic.title }}
-            </button>
+            <a class="topic-title" [routerLink]="['/temas', topic.id]">{{ topic.title }}</a>
           </h3>
           <p class="topic-excerpt">{{ topic.excerpt }}</p>
           <div class="d-flex align-items-center justify-content-between gap-2">
@@ -94,15 +91,6 @@
               >{{ topic.author }}</span
             ><span class="reply-count">{{ topic.replies }} respuestas</span>
           </div>
-          @if (expanded() === topic.id) {
-            <div class="topic-preview mt-3" [id]="'topic-' + topic.id">
-              <strong>Vista previa de la conversación</strong>
-              <p class="mb-0 mt-2">{{ topic.excerpt }}</p>
-              <small
-                >La publicación y los comentarios se incorporarán en el siguiente bloque.</small
-              >
-            </div>
-          }
         </article>
       } @empty {
         <div class="empty-state">
