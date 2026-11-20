@@ -13,3 +13,6 @@
 *.jks
 *.pem
 *.key
+
+**/.docker-local/
+!.env.example

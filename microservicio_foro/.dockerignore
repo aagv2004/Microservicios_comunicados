@@ -1,0 +1,11 @@
+**
+!Dockerfile
+!pom.xml
+!src/
+!src/**
+**/application-local.properties
+**/Wallet*/**
+**/wallet*/**
+**/*.sso
+**/*.p12
+**/*.jks

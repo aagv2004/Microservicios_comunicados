@@ -1,0 +1,60 @@
+name: nexo
+
+services:
+  usuarios:
+    image: nexo-usuarios:local
+    build: ./microservicio_usuarios
+    ports:
+      - "127.0.0.1:${USUARIOS_HOST_PORT:-8081}:8080"
+    secrets:
+      - source: usuarios_oracle
+        target: oracle.properties
+    volumes:
+      - type: bind
+        source: ${ORACLE_WALLET_PATH:?Configurar ORACLE_WALLET_PATH en .env}
+        target: /opt/oracle/wallet
+        read_only: true
+        bind:
+          create_host_path: false
+
+  foro:
+    image: nexo-foro:local
+    build: ./microservicio_foro
+    ports:
+      - "127.0.0.1:${FORO_HOST_PORT:-8082}:8080"
+    depends_on:
+      usuarios:
+        condition: service_healthy
+    secrets:
+      - source: foro_oracle
+        target: oracle.properties
+    volumes:
+      - type: bind
+        source: ${ORACLE_WALLET_PATH:?Configurar ORACLE_WALLET_PATH en .env}
+        target: /opt/oracle/wallet
+        read_only: true
+        bind:
+          create_host_path: false
+
+  moderacion:
+    image: nexo-moderacion:local
+    build: ./microservicio-moderacion
+    ports:
+      - "127.0.0.1:${MODERACION_HOST_PORT:-8083}:8080"
+    depends_on:
+      usuarios:
+        condition: service_healthy
+      foro:
+        condition: service_healthy
+
+  frontend:
+    image: nexo-frontend:local
+    build: ./frontend-foro
+    ports:
+      - "127.0.0.1:${FRONTEND_HOST_PORT:-8088}:80"
+
+secrets:
+  usuarios_oracle:
+    file: ./.docker-local/usuarios.properties
+  foro_oracle:
+    file: ./.docker-local/foro.properties
