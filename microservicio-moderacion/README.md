@@ -62,7 +62,3 @@ Errores: 400 datos inválidos; 401 credenciales ausentes o inválidas; 403 rol i
 Antes de ejecutar la nueva versión de Foro contra un esquema existente, aplicar una sola vez `../microservicio_foro/migraciones/002_moderacion.sql` con el propietario de sus tablas. En una instalación nueva, ejecutar el script base de Foro y después esta migración. La migración agrega columnas sin borrar contenido. No debe repetirse si las columnas ya existen.
 
 Foro conserva el texto, la autoría, el estado de bloqueo, el motivo y el ID del último administrador responsable. Un tema bloqueado y todos sus comentarios quedan fuera de la lectura pública; un comentario bloqueado se oculta individualmente. Las consultas directas de contenido bloqueado devuelven 404. La restauración de un tema conserva los bloqueos individuales de sus comentarios. Se mantienen las reglas de autoría para las operaciones ordinarias.
-
-## Postman
-
-Importar `postman/Moderacion.postman_collection.json`. Configurar las variables de la colección con cuentas y contenido existentes. Las credenciales incluidas son variables vacías; no se entregan cuentas reales.

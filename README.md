@@ -81,7 +81,7 @@ Los puertos se publican solo en la interfaz local. Pueden cambiarse mediante las
 
 El perfil `container` configura el puerto interno y las direcciones de otros servicios. Usuarios y Foro importan sus propiedades desde `/run/secrets/oracle.properties`; el Wallet se monta en `/opt/oracle/wallet` en modo lectura. Las imágenes no contienen esos archivos. La base de datos continúa en Oracle Cloud y debe estar disponible. Los perfiles locales y sus puertos se conservan.
 
-Las comprobaciones de salud de los servicios Java verifican que el puerto interno esté abierto; no sustituyen una operación de lectura/escritura contra Oracle. Para probar las APIs desde Windows, usar las direcciones publicadas y la colección de `microservicio-moderacion/postman`. El frontend mantiene los datos simulados y funciona separado de las APIs. Nginx resuelve las rutas Angular mediante `index.html`, incluidas las aperturas directas de `/ingresar`, `/perfil` y `/temas/1`.
+Las comprobaciones de salud de los servicios Java verifican que el puerto interno esté abierto; no sustituyen una operación de lectura/escritura contra Oracle. Para probar las APIs desde Windows, usar las direcciones publicadas. El frontend mantiene los datos simulados y funciona separado de las APIs. Nginx resuelve las rutas Angular mediante `index.html`, incluidas las aperturas directas de `/ingresar`, `/perfil` y `/temas/1`.
 
 Consultar registros y detener exclusivamente este proyecto:
 
