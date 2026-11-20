@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "node scripts/test.mjs"
+    "test": "ng test --watch=false"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -25,7 +25,10 @@
     "@angular/build": "^21.2.1",
     "@angular/cli": "^21.2.1",
     "@angular/compiler-cli": "^21.2.0",
+    "@types/node": "^22.20.5",
+    "jsdom": "^27.4.0",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
   }
 }

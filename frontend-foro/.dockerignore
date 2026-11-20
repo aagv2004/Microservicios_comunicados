@@ -10,7 +10,4 @@
 !src/**
 !public/
 !public/**
-!scripts/
-!scripts/**
-!tests/
-!tests/**
+!tsconfig.spec.json

@@ -91,6 +91,12 @@
               "exclude": ["@angular/common"]
             }
           }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json"
+          }
         }
       }
     }

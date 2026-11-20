@@ -50,7 +50,7 @@ La recuperación no envía correos: el enlace se presenta en la pantalla como si
 - `shared/forms`: campos compartidos y validadores.
 - `features/account`: formularios de cuenta cargados bajo demanda.
 - `features/forum`: portada, búsqueda y filtros.
-- `tests/auth.test.mjs`: pruebas con el ejecutor incorporado de Node.
+- `src/app/core/services/*.spec.ts`: pruebas TypeScript mediante Angular CLI y Vitest.
 
 ## Diseño responsive
 
